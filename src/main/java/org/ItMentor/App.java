@@ -12,8 +12,11 @@ public class App {
     public static void main(String[] args) {
         getSessionId();
         String code1 = addUser();
-
-        System.out.println(code1);
+        String code2 = updateUser();
+        String code3 = deleteUser();
+        String result = code1 + code2 + code3;
+        System.out.println(result);
+        System.out.println(result.length());
     }
 
 
@@ -40,6 +43,32 @@ public class App {
 
         HttpEntity<User> request = new HttpEntity<>(user, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(URL, request, String.class);
+        return response.getBody();
+    }
+    private static String updateUser() {
+        User user = new User();
+        user.setId(3L);
+        user.setName("Thomas");
+        user.setLastName("Shelby");
+        user.setAge((byte) 25);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.COOKIE, sessionId);
+
+        HttpEntity<User> request = new HttpEntity<>(user, headers);
+        ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.PUT, request, String.class);
+
+        return response.getBody();
+    }
+
+    private static String deleteUser() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.COOKIE, sessionId);
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(URL + "/3", HttpMethod.DELETE, request, String.class);
+
         return response.getBody();
     }
 }
